@@ -1,0 +1,6 @@
+{
+  "manifest_version": 3,
+  "name": "Cafe Finder",
+  "version": "1.0.0",
+  "description": "A extension with a popup to find nearby cafes."
+}
