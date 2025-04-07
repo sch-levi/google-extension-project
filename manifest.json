@@ -3,13 +3,20 @@
   "name": "Nearby Coffee Shop Finder",
   "version": "1.0",
   "action": {
-    "default_popup": "index.html"
+      "default_popup": "index.html"
   },
-  "permissions": ["geolocation"],
+  "permissions": [
+      "geolocation"
+  ],
+  "background": {
+      "service_worker": "background.js"
+  },
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline'",
-    "default-src": "'self'",
-    "img-src": "'self' data:",
-    "connect-src": "'self' https://nominatim.openstreetmap.org/"
-  }
+      "extension_pages": "script-src 'self'; object-src 'self'",
+      "connect-src": "'self' https://maps.googleapis.com/"
+  },
+  "web_accessible_resources": [{
+      "resources": ["leaflet/images/*.png"],
+      "matches": ["<all_urls>"]
+  }]
 }
