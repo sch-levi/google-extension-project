@@ -1,13 +1,28 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nearby Coffee Shop Finder</title>
+    <link rel="stylesheet" href="leaflet/leaflet.css" />
+    <style>
+        body {
+            min-width: 800px;
+            min-height: 600px;
+            margin: 0; 
+        }
+        #map {
+            height: 300px; 
+        }
+       
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <button id="findCoffee">尋找附近咖啡店</button>
+    <div id="results"></div>
+
+    <script src="leaflet/leaflet.js"></script>
+    <script src="app.js"></script>
+</body>
 </html>

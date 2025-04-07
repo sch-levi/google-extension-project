@@ -1,6 +1,15 @@
 {
   "manifest_version": 3,
-  "name": "Cafe Finder",
-  "version": "1.0.0",
-  "description": "A extension with a popup to find nearby cafes."
+  "name": "Nearby Coffee Shop Finder",
+  "version": "1.0",
+  "action": {
+    "default_popup": "index.html"
+  },
+  "permissions": ["geolocation"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline'",
+    "default-src": "'self'",
+    "img-src": "'self' data:",
+    "connect-src": "'self' https://nominatim.openstreetmap.org/"
+  }
 }

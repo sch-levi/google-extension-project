@@ -1,42 +1,180 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+.app-container {
+  width: 350px;
+  min-height: 500px;
+  font-family: 'Arial', sans-serif;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.search-container {
+  padding: 20px;
+  background: linear-gradient(135deg, #f5e9d4 0%, #d9c2a7 100%);
+  border-radius: 8px;
   text-align: center;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.title {
+  font-size: 18px;
+  margin: 0 0 15px;
+  color: #6f4e37;
+  font-weight: 600;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.search-input {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  outline: none;
+  margin-bottom: 15px;
+  transition: border-color 0.3s;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.search-input:focus {
+  border-color: #4285f4;
 }
 
-.card {
-  padding: 2em;
+.button-group {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
 }
 
-.read-the-docs {
-  color: #888;
+.search-btn,
+.nearby-btn {
+  padding: 8px 15px;
+  font-size: 14px;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.search-btn {
+  background: #4285f4;
+}
+
+.search-btn:hover {
+  background: #3267d6;
+}
+
+.nearby-btn {
+  background: #34a853;
+}
+
+.nearby-btn:hover {
+  background: #2d9147;
+}
+
+.results-container {
+  display: flex;
+  flex-direction: column;
+  height: 500px;
+}
+
+.map-container {
+  flex: 1;
+  height: 250px;
+  position: relative;
+}
+
+.back-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 5px 10px;
+  background: #f1f1f1;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.back-btn:hover {
+  background: #e0e0e0;
+}
+
+.list-section {
+  flex: 1;
+  padding: 10px;
+  overflow: hidden;
+}
+
+.list-title {
+  font-size: 16px;
+  margin: 0 0 10px;
+  color: #333;
+}
+
+.coffee-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+.coffee-item {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.coffee-item:last-child {
+  border-bottom: none;
+}
+
+.shop-info {
+  font-weight: 500;
+  color: #333;
+}
+
+.shop-address {
+  color: #777;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.shop-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.navigate-btn,
+.favorite-btn {
+  padding: 5px 10px;
+  font-size: 12px;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.navigate-btn {
+  background: #4285f4;
+}
+
+.navigate-btn:hover {
+  background: #3267d6;
+}
+
+.favorite-btn {
+  background: #ccc;
+}
+
+.favorite-btn.favorited {
+  background: #ea4335;
+}
+
+.favorite-btn:hover {
+  background: #d93025;
 }
