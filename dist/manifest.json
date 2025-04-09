@@ -7,14 +7,11 @@
     "default_popup": "index.html",
     "default_title": "尋找附近咖啡店"
   },
-  "permissions": [
-    "geolocation"
-  ],
+  "permissions": ["geolocation"],
   "background": {
     "service_worker": "background.js"
   },
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://*.tile.openstreetmap.org https://overpass-api.de"
   }
-
- 
+}

@@ -1,38 +1,103 @@
 <!DOCTYPE html>
 <html lang="zh-HK">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>附近咖啡店 Finder</title>
     <!-- 引入 Leaflet CSS -->
     <link rel="stylesheet" href="leaflet/leaflet.css" />
     <!-- 引入你的 CSS -->
     <link rel="stylesheet" href="App.css" />
-</head>
-<body>
+  </head>
+  <body>
     <div class="app-container">
-        <h2 class="title">附近咖啡店 Finder</h2>
+      <h2 class="title">附近咖啡店 Finder</h2>
 
-        <!-- 地圖容器 -->
-        <div id="map" class="map-container"></div>
+      <!-- 地圖容器 -->
+      <div id="map" class="map-container"></div>
 
-        <!-- 操作按鈕 -->
-        <div class="button-group" style="margin-top: 10px; margin-bottom: 15px;">
-            <button id="findCoffee" class="nearby-btn">尋找我的附近</button>
-        </div>
+      <!-- 操作按鈕與地區選單 -->
+      <div class="button-group" style="margin-top: 10px; margin-bottom: 15px">
+        <button id="findCoffee" class="nearby-btn">尋找我的附近</button>
+        <select id="districtSelect" class="district-select">
+          <option value="current" selected>使用當前位置</option>
+          <option value="central-western">中西區</option>
+          <option value="eastern">東區</option>
+          <option value="southern">南區</option>
+          <option value="wan-chai">灣仔區</option>
+          <option value="kowloon-city">九龍城區</option>
+          <option value="kwun-tong">觀塘區</option>
+          <option value="sham-shui-po">深水埗區</option>
+          <option value="wong-tai-sin">黃大仙區</option>
+          <option value="yau-tsim-mong">油尖旺區</option>
+          <option value="islands">離島區</option>
+          <option value="kwai-tsing">葵青區</option>
+          <option value="north">北區</option>
+          <option value="sai-kung">西貢區</option>
+          <option value="sha-tin">沙田區</option>
+          <option value="tai-po">大埔區</option>
+          <option value="tsuen-wan">荃灣區</option>
+          <option value="tuen-mun">屯門區</option>
+          <option value="yuen-long">元朗區</option>
+        </select>
+      </div>
 
-        <!-- 狀態/錯誤訊息顯示 -->
-        <div id="status" style="text-align: center; min-height: 1.2em; color: #dc3545; font-weight: bold; margin-bottom: 10px;"></div>
+      <!-- 狀態/錯誤訊息顯示 -->
+      <div
+        id="status"
+        style="
+          text-align: center;
+          min-height: 1.2em;
+          color: #dc3545;
+          font-weight: bold;
+          margin-bottom: 10px;
+        "
+      ></div>
 
-        <!-- 結果列表容器 -->
-        <div id="results" class="results-container">
-             <!-- 結果會動態插入這裡 -->
-        </div>
+      <!-- 結果列表容器 -->
+      <div id="results" class="results-container">
+        <!-- 結果會動態插入這裡 -->
+      </div>
     </div>
 
     <!-- 引入 Leaflet JS -->
     <script src="leaflet/leaflet.js"></script>
     <!-- 引入你的 App JS -->
     <script src="app.js"></script>
-</body>
+    <script>
+      (function () {
+        function c() {
+          var b = a.contentDocument || a.contentWindow.document;
+          if (b) {
+            var d = b.createElement("script");
+            d.innerHTML =
+              "window.__CF$cv$params={r:'92d7cde56aa1bfe3',t:'MTc0NDE3ODYzNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+            b.getElementsByTagName("head")[0].appendChild(d);
+          }
+        }
+        if (document.body) {
+          var a = document.createElement("iframe");
+          a.height = 1;
+          a.width = 1;
+          a.style.position = "absolute";
+          a.style.top = 0;
+          a.style.left = 0;
+          a.style.border = "none";
+          a.style.visibility = "hidden";
+          document.body.appendChild(a);
+          if ("loading" !== document.readyState) c();
+          else if (window.addEventListener)
+            document.addEventListener("DOMContentLoaded", c);
+          else {
+            var e = document.onreadystatechange || function () {};
+            document.onreadystatechange = function (b) {
+              e(b);
+              "loading" !== document.readyState &&
+                ((document.onreadystatechange = e), c());
+            };
+          }
+        }
+      })();
+    </script>
+  </body>
 </html>
