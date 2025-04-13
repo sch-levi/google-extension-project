@@ -1,4 +1,3 @@
-// app.js
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Popup loaded");
 
@@ -6,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const findCoffeeButton = document.getElementById("findCoffee");
   const resultsDiv = document.getElementById("results");
   const statusDiv = document.getElementById("status");
+  const toggleResultsButton = document.getElementById("toggleResults");
 
   let map;
   let userMarker;
@@ -14,26 +14,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initMap(currentUserCoords, 13);
 
-  // 香港 18 區的經緯度（示例座標，建議使用精確數據）
   const hongKongDistricts = {
-    "central-western": [22.2864, 114.1549], // 中西區
-    eastern: [22.2841, 114.224], // 東區
-    southern: [22.2473, 114.1586], // 南區
-    "wan-chai": [22.279, 114.1725], // 灣仔區
-    "kowloon-city": [22.3282, 114.1916], // 九龍城區
-    "kwun-tong": [22.3133, 114.2258], // 觀塘區
-    "sham-shui-po": [22.3302, 114.1595], // 深水埗區
-    "wong-tai-sin": [22.3419, 114.1931], // 黃大仙區
-    "yau-tsim-mong": [22.3027, 114.1716], // 油尖旺區
-    islands: [22.2611, 113.9461], // 離島區
-    "kwai-tsing": [22.3639, 114.1289], // 葵青區
-    north: [22.4947, 114.1381], // 北區
-    "sai-kung": [22.3813, 114.2709], // 西貢區
-    "sha-tin": [22.3771, 114.1974], // 沙田區
-    "tai-po": [22.4501, 114.1688], // 大埔區
-    "tsuen-wan": [22.3707, 114.1048], // 荃灣區
-    "tuen-mun": [22.3918, 113.9773], // 屯門區
-    "yuen-long": [22.4445, 114.0222], // 元朗區
+    "central-western": [22.2864, 114.1549],
+    eastern: [22.2841, 114.224],
+    southern: [22.2473, 114.1586],
+    "wan-chai": [22.279, 114.1725],
+    "kowloon-city": [22.3282, 114.1916],
+    "kwun-tong": [22.3133, 114.2258],
+    "sham-shui-po": [22.3302, 114.1595],
+    "wong-tai-sin": [22.3419, 114.1931],
+    "yau-tsim-mong": [22.3027, 114.1716],
+    islands: [22.2611, 113.9461],
+    "kwai-tsing": [22.3639, 114.1289],
+    north: [22.4947, 114.1381],
+    "sai-kung": [22.3813, 114.2709],
+    "sha-tin": [22.3771, 114.1974],
+    "tai-po": [22.4501, 114.1688],
+    "tsuen-wan": [22.3707, 114.1048],
+    "tuen-mun": [22.3918, 113.9773],
+    "yuen-long": [22.4445, 114.0222],
   };
 
   function initMap(coords, zoomLevel) {
@@ -52,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function searchCoffeeShops(coords) {
     setStatus("正在搜索附近咖啡店...");
     currentUserCoords = coords || [22.3193, 114.1694];
-    const radius = 1500; // 固定為 1500 米
+    const radius = 1500;
 
     console.log(
       "[App] Sending search request with coords:",
@@ -80,6 +79,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         if (response.success) {
           displayResults(response.data, currentUserCoords);
+          resultsDiv.style.display = "block"; // 搜索完成後自動展開
+          toggleResultsButton.textContent = "隱藏咖啡店清單";
         } else {
           showError("搜索失敗: " + response.error);
         }
@@ -133,10 +134,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const combinedSearchTerm = `${shopName}${
           locationHint ? " " + locationHint : ""
         }`;
-        console.log(
-          `[App] Combined search term for ${shopName}: "${combinedSearchTerm}"`
-        );
-
         const openriceQuery = encodeURIComponent(combinedSearchTerm);
         const openriceUrl = `https://www.openrice.com/zh/hongkong/restaurants?what=${openriceQuery}`;
         const openriceLink = document.createElement("a");
@@ -205,6 +202,20 @@ document.addEventListener("DOMContentLoaded", () => {
     setStatus(msg);
     console.error(msg);
   }
+
+  // 展開/收起清單按鈕
+  toggleResultsButton.addEventListener("click", () => {
+    if (
+      resultsDiv.style.display === "none" ||
+      resultsDiv.style.display === ""
+    ) {
+      resultsDiv.style.display = "block";
+      toggleResultsButton.textContent = "隱藏咖啡店清單";
+    } else {
+      resultsDiv.style.display = "none";
+      toggleResultsButton.textContent = "顯示咖啡店清單";
+    }
+  });
 
   findCoffeeButton.addEventListener("click", () => {
     console.log("Find coffee button clicked");

@@ -1,220 +1,298 @@
-// app.js
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("Popup loaded");
 
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('Popup loaded');
+  const mapDiv = document.getElementById("map");
+  const findCoffeeButton = document.getElementById("findCoffee");
+  const resultsDiv = document.getElementById("results");
+  const statusDiv = document.getElementById("status");
+  const toggleResultsButton = document.getElementById("toggleResults");
 
-    const mapDiv = document.getElementById('map');
-    const findCoffeeButton = document.getElementById('findCoffee');
-    const resultsDiv = document.getElementById('results');
-    const statusDiv = document.getElementById('status');
+  let map;
+  let userMarker;
+  let coffeeShopMarkers = [];
+  let currentUserCoords = [22.3193, 114.1694]; // 預設
 
-    let map;
-    let userMarker;
-    let coffeeShopMarkers = [];
-    let currentUserCoords = [22.3193, 114.1694]; // 預設香港座標
+  initMap(currentUserCoords, 13);
 
-    initMap(currentUserCoords, 13);
+  const hongKongDistricts = {
+    "central-western": [22.2864, 114.1549],
+    eastern: [22.2841, 114.224],
+    southern: [22.2473, 114.1586],
+    "wan-chai": [22.279, 114.1725],
+    "kowloon-city": [22.3282, 114.1916],
+    "kwun-tong": [22.3133, 114.2258],
+    "sham-shui-po": [22.3302, 114.1595],
+    "wong-tai-sin": [22.3419, 114.1931],
+    "yau-tsim-mong": [22.3027, 114.1716],
+    islands: [22.2611, 113.9461],
+    "kwai-tsing": [22.3639, 114.1289],
+    north: [22.4947, 114.1381],
+    "sai-kung": [22.3813, 114.2709],
+    "sha-tin": [22.3771, 114.1974],
+    "tai-po": [22.4501, 114.1688],
+    "tsuen-wan": [22.3707, 114.1048],
+    "tuen-mun": [22.3918, 113.9773],
+    "yuen-long": [22.4445, 114.0222],
+  };
 
-    function initMap(coords, zoomLevel) {
-        if (map) {
-            map.remove();
+  function initMap(coords, zoomLevel) {
+    if (map) {
+      map.remove();
+    }
+    map = L.map(mapDiv).setView(coords, zoomLevel);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution:
+        '© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
+      maxZoom: 19,
+    }).addTo(map);
+    console.log("Map initialized at:", coords);
+  }
+
+  function searchCoffeeShops(coords) {
+    setStatus("正在搜索附近咖啡店...");
+    currentUserCoords = coords || [22.3193, 114.1694];
+    const radius = 1500;
+
+    console.log(
+      "[App] Sending search request with coords:",
+      currentUserCoords,
+      "radius:",
+      radius
+    );
+    resultsDiv.innerHTML = "";
+
+    chrome.runtime.sendMessage(
+      {
+        action: "fetchNearbyCoffee",
+        coords: currentUserCoords,
+        radius: radius,
+      },
+      (response) => {
+        console.log("[App] Search Response:", response);
+        if (chrome.runtime.lastError) {
+          showError("與背景腳本通信失敗: " + chrome.runtime.lastError.message);
+          return;
         }
-        map = L.map(mapDiv).setView(coords, zoomLevel);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
-            maxZoom: 19,
-        }).addTo(map);
-        console.log('Map initialized at:', coords);
-    }
-
-    function searchCoffeeShops(coords) {
-        setStatus('正在從 OpenStreetMap 搜索附近咖啡店...');
-        currentUserCoords = coords || [22.3193, 114.1694];
-        console.log("[App] Sending search request with coords:", currentUserCoords);
-        resultsDiv.innerHTML = '';
-
-        chrome.runtime.sendMessage(
-            { action: "fetchNearbyCoffee", coords: currentUserCoords },
-            (response) => {
-                console.log("[App] Search Response:", response);
-                if (chrome.runtime.lastError) {
-                    showError('與背景腳本通信失敗: ' + chrome.runtime.lastError.message);
-                    return;
-                }
-                if (!response) {
-                    showError('未收到背景腳本的回應');
-                    return;
-                }
-                if (response.success) {
-                    displayResults(response.data, currentUserCoords);
-                } else {
-                    showError('搜索失敗: ' + response.error);
-                }
-            }
-        );
-    }
-
-    function displayResults(data, userCoords) {
-        coffeeShopMarkers.forEach(marker => map.removeLayer(marker));
-        coffeeShopMarkers = [];
-        resultsDiv.innerHTML = '';
-
-        if (data?.length > 0) {
-            resultsDiv.innerHTML = '<h3>附近咖啡店 (來自 OpenStreetMap)：</h3>';
-            data.forEach(shop => {
-                const shopName = shop.display_name || "未命名地點";
-                const shopLat = shop.lat;
-                const shopLon = shop.lon;
-                const shopAddress = shop.address || "地址未提供";
-                const shopDistrict = shop.district || ""; // 從 background.js 獲取地區
-                const shopCity = shop.city || "";       // 從 background.js 獲取城市
-
-                if (shopLat === undefined || shopLon === undefined) {
-                    console.warn("Skipping shop due to invalid coordinates:", shop);
-                    return;
-                }
-
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'coffee-item';
-
-                const title = document.createElement('h4');
-                title.textContent = shopName;
-                itemDiv.appendChild(title);
-
-                const addressP = document.createElement('p');
-                addressP.className = 'shop-address';
-                addressP.textContent = shopAddress;
-                itemDiv.appendChild(addressP);
-
-                const actionsDiv = document.createElement('div');
-                actionsDiv.className = 'shop-actions';
-
-                // --- 修改：組合搜尋關鍵字 (店名 + 地區/城市) ---
-                // 優先使用地區，如果沒有則用城市，如果都沒有就留空
-                const locationHint = (shopDistrict || shopCity).trim();
-                // 組合最終搜尋字串，只有當 locationHint 非空時才加上空格和 hint
-                const combinedSearchTerm = `${shopName}${locationHint ? ' ' + locationHint : ''}`;
-                console.log(`[App] Combined search term for ${shopName}: "${combinedSearchTerm}"`); // Log 組合後的字串
-
-                // 1. OpenRice 搜尋連結 (使用組合關鍵字)
-                const openriceQuery = encodeURIComponent(combinedSearchTerm);
-                const openriceUrl = `https://www.openrice.com/zh/hongkong/restaurants?what=${openriceQuery}`;
-                const openriceLink = document.createElement('a');
-                openriceLink.href = openriceUrl;
-                openriceLink.target = '_blank';
-                openriceLink.className = 'external-link-btn openrice';
-                openriceLink.textContent = '在 OpenRice 尋找';
-                actionsDiv.appendChild(openriceLink);
-
-                // 2. TripAdvisor 搜尋連結 (使用組合關鍵字)
-                const tripadvisorQuery = encodeURIComponent(combinedSearchTerm);
-                const tripadvisorUrl = `https://www.tripadvisor.com/Search?q=${tripadvisorQuery}`;
-                const tripadvisorLink = document.createElement('a');
-                tripadvisorLink.href = tripadvisorUrl;
-                tripadvisorLink.target = '_blank';
-                tripadvisorLink.className = 'external-link-btn tripadvisor';
-                tripadvisorLink.textContent = '在 TripAdvisor 尋找';
-                actionsDiv.appendChild(tripadvisorLink);
-                // --- 修改結束 ---
-
-                itemDiv.appendChild(actionsDiv);
-                resultsDiv.appendChild(itemDiv);
-
-                // 地圖標記 (Popup 內容可保持簡單或加入連結)
-                const shopCoords = [shopLat, shopLon];
-                const popupContent = `<b>${shopName}</b><br>${shopAddress}`;
-                // 可選：在 Popup 加入連結
-                // const popupContent = `<b>${shopName}</b><br>${shopAddress}<br>
-                //                     <a href="${openriceUrl}" target="_blank">OpenRice</a> |
-                //                     <a href="${tripadvisorUrl}" target="_blank">TripAdvisor</a>`;
-                const marker = L.marker(shopCoords)
-                                .addTo(map)
-                                .bindPopup(popupContent);
-                coffeeShopMarkers.push(marker);
-            });
-
-            // 調整地圖視野
-            if (coffeeShopMarkers.length > 0) {
-                const group = L.featureGroup(coffeeShopMarkers);
-                if (userMarker) {
-                    group.addLayer(userMarker);
-                }
-                 try {
-                    map.fitBounds(group.getBounds().pad(0.15));
-                 } catch (e) {
-                    console.error("FitBounds error:", e);
-                     if(userMarker) map.setView(userMarker.getLatLng(), 15);
-                 }
-            }
-
+        if (!response) {
+          showError("未收到背景腳本的回應");
+          return;
+        }
+        if (response.success) {
+          displayResults(response.data, currentUserCoords);
+          resultsDiv.style.display = "block"; // 搜索完成後自動展開
+          toggleResultsButton.textContent = "隱藏咖啡店清單";
         } else {
-            resultsDiv.innerHTML = '<p style="text-align: center; margin-top: 20px;">在附近沒有找到咖啡店 (數據來自 OpenStreetMap)。</p>';
+          showError("搜索失敗: " + response.error);
         }
+      }
+    );
+  }
 
-        // OSM 版權署名
-        const attributionP = document.createElement('p');
-        attributionP.className = 'osm-attribution';
-        attributionP.innerHTML = '地圖數據 © <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors';
-        resultsDiv.appendChild(attributionP);
+  function displayResults(data, userCoords) {
+    coffeeShopMarkers.forEach((marker) => map.removeLayer(marker));
+    coffeeShopMarkers = [];
+    resultsDiv.innerHTML = "";
 
-        setStatus(''); // 清除狀態訊息
-    }
-
-    function setStatus(msg) {
-        if (statusDiv) {
-            statusDiv.textContent = msg;
-        }
-        if(msg !== '') console.log('Status:', msg);
-    }
-
-    function showError(msg) {
-        setStatus(msg);
-        console.error(msg);
-    }
-
-    findCoffeeButton.addEventListener('click', () => {
-        console.log('Find coffee button clicked');
-        setStatus('正在獲取您的位置...');
-        resultsDiv.innerHTML = '';
-        if (userMarker) {
-            map.removeLayer(userMarker);
-            userMarker = null;
-        }
-         coffeeShopMarkers.forEach(marker => map.removeLayer(marker));
-         coffeeShopMarkers = [];
-
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                position => {
-                    const userCoords = [position.coords.latitude, position.coords.longitude];
-                    console.log('User location obtained:', userCoords);
-                    setStatus('位置已獲取，開始搜索...');
-                    map.setView(userCoords, 15);
-                    userMarker = L.marker(userCoords)
-                                  .addTo(map)
-                                  .bindPopup('您的位置')
-                                  .openPopup();
-                    searchCoffeeShops(userCoords);
-                },
-                error => {
-                    console.error('Geolocation error:', error);
-                    let errorMsg = '無法獲取位置';
-                    switch(error.code) {
-                        case error.PERMISSION_DENIED: errorMsg += ": 您拒絕了位置權限請求。"; break;
-                        case error.POSITION_UNAVAILABLE: errorMsg += ": 位置資訊不可用。"; break;
-                        case error.TIMEOUT: errorMsg += ": 獲取位置超時。"; break;
-                        default: errorMsg += ": 發生未知錯誤。";
-                    }
-                    showError(errorMsg + " 將使用預設位置搜索。");
-                    searchCoffeeShops(); // 使用預設座標
-                },
-                { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
-            );
-        } else {
-            showError('您的瀏覽器不支持地理定位功能。將使用預設位置搜索。');
-            searchCoffeeShops(); // 使用預設座標
-        }
+    const coffeeIcon = L.icon({
+      iconUrl: "coffee-icon.png",
+      iconSize: [32, 32],
+      iconAnchor: [16, 32],
+      popupAnchor: [0, -32],
     });
 
-    console.log('Popup script finished loading.');
+    if (data?.length > 0) {
+      resultsDiv.innerHTML = "<h3>附近咖啡店 ：</h3>";
+      data.forEach((shop) => {
+        const shopName = shop.display_name || "未命名地點";
+        const shopLat = shop.lat;
+        const shopLon = shop.lon;
+        const shopAddress = shop.address || "地址未提供";
+        const shopDistrict = shop.district || "";
+        const shopCity = shop.city || "";
+
+        if (shopLat === undefined || shopLon === undefined) {
+          console.warn("Skipping shop due to invalid coordinates:", shop);
+          return;
+        }
+
+        const itemDiv = document.createElement("div");
+        itemDiv.className = "coffee-item";
+
+        const title = document.createElement("h4");
+        title.textContent = shopName;
+        itemDiv.appendChild(title);
+
+        const addressP = document.createElement("p");
+        addressP.className = "shop-address";
+        addressP.textContent = shopAddress;
+        itemDiv.appendChild(addressP);
+
+        const actionsDiv = document.createElement("div");
+        actionsDiv.className = "shop-actions";
+
+        const locationHint = (shopDistrict || shopCity).trim();
+        const combinedSearchTerm = `${shopName}${
+          locationHint ? " " + locationHint : ""
+        }`;
+        const openriceQuery = encodeURIComponent(combinedSearchTerm);
+        const openriceUrl = `https://www.openrice.com/zh/hongkong/restaurants?what=${openriceQuery}`;
+        const openriceLink = document.createElement("a");
+        openriceLink.href = openriceUrl;
+        openriceLink.target = "_blank";
+        openriceLink.className = "external-link-btn openrice";
+        openriceLink.textContent = "在 OpenRice 尋找";
+        actionsDiv.appendChild(openriceLink);
+
+        const tripadvisorQuery = encodeURIComponent(combinedSearchTerm);
+        const tripadvisorUrl = `https://www.tripadvisor.com/Search?q=${tripadvisorQuery}`;
+        const tripadvisorLink = document.createElement("a");
+        tripadvisorLink.href = tripadvisorUrl;
+        tripadvisorLink.target = "_blank";
+        tripadvisorLink.className = "external-link-btn tripadvisor";
+        tripadvisorLink.textContent = "在 TripAdvisor 尋找";
+        actionsDiv.appendChild(tripadvisorLink);
+
+        itemDiv.appendChild(actionsDiv);
+        resultsDiv.appendChild(itemDiv);
+
+        const popupContent = `<b>${shopName}</b><br>${shopAddress}<br>
+                             <a href="${openriceUrl}" target="_blank">OpenRice</a> |
+                             <a href="${tripadvisorUrl}" target="_blank">TripAdvisor</a>`;
+        const shopCoords = [shopLat, shopLon];
+        const marker = L.marker(shopCoords, { icon: coffeeIcon })
+          .addTo(map)
+          .bindPopup(popupContent);
+        coffeeShopMarkers.push(marker);
+      });
+
+      if (coffeeShopMarkers.length > 0) {
+        const group = L.featureGroup(coffeeShopMarkers);
+        if (userMarker) {
+          group.addLayer(userMarker);
+        }
+        try {
+          map.fitBounds(group.getBounds().pad(0.15));
+        } catch (e) {
+          console.error("FitBounds error:", e);
+          if (userMarker) map.setView(userMarker.getLatLng(), 15);
+        }
+      }
+    } else {
+      resultsDiv.innerHTML =
+        '<p style="text-align: center; margin-top: 20px;">在附近沒有找到咖啡店 (數據來自 OpenStreetMap)。</p>';
+    }
+
+    const attributionP = document.createElement("p");
+    attributionP.className = "osm-attribution";
+    attributionP.innerHTML =
+      '地圖數據 © <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors';
+    resultsDiv.appendChild(attributionP);
+
+    setStatus("");
+  }
+
+  function setStatus(msg) {
+    if (statusDiv) {
+      statusDiv.textContent = msg;
+    }
+    if (msg !== "") console.log("Status:", msg);
+  }
+
+  function showError(msg) {
+    setStatus(msg);
+    console.error(msg);
+  }
+
+  // 展開/收起清單按鈕
+  toggleResultsButton.addEventListener("click", () => {
+    if (
+      resultsDiv.style.display === "none" ||
+      resultsDiv.style.display === ""
+    ) {
+      resultsDiv.style.display = "block";
+      toggleResultsButton.textContent = "隱藏咖啡店清單";
+    } else {
+      resultsDiv.style.display = "none";
+      toggleResultsButton.textContent = "顯示咖啡店清單";
+    }
+  });
+
+  findCoffeeButton.addEventListener("click", () => {
+    console.log("Find coffee button clicked");
+    setStatus("正在獲取您的位置或地區...");
+    resultsDiv.innerHTML = "";
+    if (userMarker) {
+      map.removeLayer(userMarker);
+      userMarker = null;
+    }
+    coffeeShopMarkers.forEach((marker) => map.removeLayer(marker));
+    coffeeShopMarkers = [];
+
+    const districtSelect = document.getElementById("districtSelect");
+    const selectedDistrict = districtSelect.value;
+
+    if (selectedDistrict === "current") {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const userCoords = [
+              position.coords.latitude,
+              position.coords.longitude,
+            ];
+            console.log("User location obtained:", userCoords);
+            setStatus("位置已獲取，開始搜索...");
+            map.setView(userCoords, 15);
+            userMarker = L.marker(userCoords)
+              .addTo(map)
+              .bindPopup("您的位置")
+              .openPopup();
+            searchCoffeeShops(userCoords);
+          },
+          (error) => {
+            console.error("Geolocation error:", error);
+            let errorMsg = "無法獲取位置";
+            switch (error.code) {
+              case error.PERMISSION_DENIED:
+                errorMsg += ": 您拒絕了位置權限請求。";
+                break;
+              case error.POSITION_UNAVAILABLE:
+                errorMsg += ": 位置資訊不可用。";
+                break;
+              case error.TIMEOUT:
+                errorMsg += ": 獲取位置超時。";
+                break;
+              default:
+                errorMsg += ": 發生未知錯誤。";
+            }
+            showError(errorMsg + " 將使用預設位置搜索。");
+            searchCoffeeShops();
+          },
+          { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+        );
+      } else {
+        showError("您的瀏覽器不支持地理定位功能。將使用預設位置搜索。");
+        searchCoffeeShops();
+      }
+    } else {
+      const districtCoords = hongKongDistricts[selectedDistrict];
+      console.log(
+        `Selected district: ${selectedDistrict}, coords: ${districtCoords}`
+      );
+      setStatus(
+        `正在搜索 ${
+          districtSelect.options[districtSelect.selectedIndex].text
+        } 附近的咖啡店...`
+      );
+      map.setView(districtCoords, 13);
+      userMarker = L.marker(districtCoords)
+        .addTo(map)
+        .bindPopup(
+          `${districtSelect.options[districtSelect.selectedIndex].text} 中心`
+        )
+        .openPopup();
+      searchCoffeeShops(districtCoords);
+    }
+  });
+
+  console.log("Popup script finished loading.");
 });

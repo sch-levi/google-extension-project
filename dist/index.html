@@ -4,19 +4,30 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>附近咖啡店 Finder</title>
-    <!-- 引入 Leaflet CSS -->
     <link rel="stylesheet" href="leaflet/leaflet.css" />
-    <!-- 引入你的 CSS -->
     <link rel="stylesheet" href="App.css" />
+    <style>
+      .map-container {
+        height: 500px; /* 固定地圖高度，可調整 */
+        width: 100%;
+      }
+      .results-container {
+        display: none; /* 預設隱藏 */
+        max-height: 300px; /* 展開後限制高度 */
+        overflow-y: auto; /* 啟用滾動 */
+        margin-top: 10px;
+      }
+      .toggle-btn {
+        margin: 10px 0;
+        padding: 5px 10px;
+        cursor: pointer;
+      }
+    </style>
   </head>
   <body>
     <div class="app-container">
       <h2 class="title">附近咖啡店 Finder</h2>
-
-      <!-- 地圖容器 -->
       <div id="map" class="map-container"></div>
-
-      <!-- 操作按鈕與地區選單 -->
       <div class="button-group" style="margin-top: 10px; margin-bottom: 15px">
         <button id="findCoffee" class="nearby-btn">尋找我的附近</button>
         <select id="districtSelect" class="district-select">
@@ -41,8 +52,6 @@
           <option value="yuen-long">元朗區</option>
         </select>
       </div>
-
-      <!-- 狀態/錯誤訊息顯示 -->
       <div
         id="status"
         style="
@@ -53,16 +62,10 @@
           margin-bottom: 10px;
         "
       ></div>
-
-      <!-- 結果列表容器 -->
-      <div id="results" class="results-container">
-        <!-- 結果會動態插入這裡 -->
-      </div>
+      <button id="toggleResults" class="toggle-btn">顯示咖啡店清單</button>
+      <div id="results" class="results-container"></div>
     </div>
-
-    <!-- 引入 Leaflet JS -->
     <script src="leaflet/leaflet.js"></script>
-    <!-- 引入你的 App JS -->
     <script src="app.js"></script>
     <script>
       (function () {

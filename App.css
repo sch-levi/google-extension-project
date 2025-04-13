@@ -3,7 +3,7 @@ body {
   width: 400px; /* 擴展彈窗寬度 */
   height: 580px; /* 擴展彈窗高度 */
   margin: 0;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
   line-height: 1.4;
   color: #333;
@@ -135,4 +135,12 @@ body {
 }
 .osm-attribution a:hover {
   text-decoration: underline;
+}
+
+.district-select {
+  padding: 8px;
+  margin-left: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
 }
