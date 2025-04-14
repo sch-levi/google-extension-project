@@ -4,34 +4,28 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>附近咖啡店 Finder</title>
+    <!-- Link Leaflet CSS first -->
     <link rel="stylesheet" href="leaflet/leaflet.css" />
+    <!-- Link your custom CSS -->
     <link rel="stylesheet" href="App.css" />
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <style>
-      .map-container {
-        height: 500px; /* 固定地圖高度，可調整 */
-        width: 100%;
-      }
-      .results-container {
-        display: none; /* 預設隱藏 */
-        max-height: 300px; /* 展開後限制高度 */
-        overflow-y: auto; /* 啟用滾動 */
-        margin-top: 10px;
-      }
-      .toggle-btn {
-        margin: 10px 0;
-        padding: 5px 10px;
-        cursor: pointer;
-      }
-    </style>
+    <!-- Favicon (Optional but recommended) -->
+    <link rel="icon" href="coffee-icon.png" type="image/png" />
   </head>
   <body>
     <div class="app-container">
       <h2 class="title">附近咖啡店 Finder</h2>
-      <div id="map" class="map-container"></div>
-      <div class="button-group" style="margin-top: 10px; margin-bottom: 15px">
-        <button id="findCoffee" class="nearby-btn">尋找我的附近</button>
-        <select id="districtSelect" class="district-select">
+
+      <!-- Map Container -->
+      <div id="map"></div>
+
+      <!-- Controls: Button and District Selector -->
+      <div class="controls-group">
+        <button id="findCoffee" class="nearby-btn">尋找附近</button>
+        <select
+          id="districtSelect"
+          class="district-select"
+          aria-label="選擇區域或使用當前位置"
+        >
           <option value="current" selected>使用當前位置</option>
           <option value="central-western">中西區</option>
           <option value="eastern">東區</option>
@@ -53,51 +47,30 @@
           <option value="yuen-long">元朗區</option>
         </select>
       </div>
+
+      <!-- Status Message Area -->
       <div id="status"></div>
-      <button id="toggleResults" class="toggle-btn">顯示咖啡店清單</button>
-      <div id="results" class="results-container"></div>
+
+      <!-- Toggle Results Button -->
+      <button
+        id="toggleResults"
+        class="toggle-btn"
+        aria-expanded="false"
+        aria-controls="results"
+      >
+        顯示咖啡店清單
+      </button>
+
+      <!-- Results List Container -->
+      <div id="results" role="region" aria-labelledby="toggleResults">
+        <!-- Results will be dynamically inserted here -->
+      </div>
     </div>
+    <!-- End of app-container -->
+
+    <!-- Load Leaflet JS -->
     <script src="leaflet/leaflet.js"></script>
+    <!-- Load your custom App JS -->
     <script src="app.js"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        lucide.createIcons();
-      });
-    </script>
-    <script>
-      (function () {
-        function c() {
-          var b = a.contentDocument || a.contentWindow.document;
-          if (b) {
-            var d = b.createElement("script");
-            d.innerHTML =
-              "window.__CF$cv$params={r:'92d7cde56aa1bfe3',t:'MTc0NDE3ODYzNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
-            b.getElementsByTagName("head")[0].appendChild(d);
-          }
-        }
-        if (document.body) {
-          var a = document.createElement("iframe");
-          a.height = 1;
-          a.width = 1;
-          a.style.position = "absolute";
-          a.style.top = 0;
-          a.style.left = 0;
-          a.style.border = "none";
-          a.style.visibility = "hidden";
-          document.body.appendChild(a);
-          if ("loading" !== document.readyState) c();
-          else if (window.addEventListener)
-            document.addEventListener("DOMContentLoaded", c);
-          else {
-            var e = document.onreadystatechange || function () {};
-            document.onreadystatechange = function (b) {
-              e(b);
-              "loading" !== document.readyState &&
-                ((document.onreadystatechange = e), c());
-            };
-          }
-        }
-      })();
-    </script>
   </body>
 </html>

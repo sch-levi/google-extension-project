@@ -1,11 +1,11 @@
 {
   "manifest_version": 3,
-  "name": "附近咖啡店 Finder (OSM)",
-  "version": "1.1",
-  "description": "用地圖尋找附近的咖啡店 (使用OpenStreetMap)，並提供外部評價連結。",
+  "name": "Cafe Finder",
+  "version": "1.0",
+  "description": "Find nearby cafes.",
   "action": {
     "default_popup": "index.html",
-    "default_title": "尋找附近咖啡店"
+    "default_title": "Find Cafes"
   },
   "permissions": ["geolocation"],
   "background": {
