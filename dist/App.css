@@ -22,8 +22,22 @@ body {
   text-align: center;
   color: #333;
   margin-top: 0;
-  margin-bottom: 15px;
+  margin-bottom: 10px; /* 減少底部間距 */
   font-size: 1.4em;
+  display: flex; /* 使用 flex 佈局讓圖標與文字自然排列 */
+  align-items: center; /* 垂直居中對齊 */
+  justify-content: center; /* 水平居中 */
+}
+
+/* 咖啡杯圖標 */
+.title::before {
+  content: "";
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  margin-right: 8px; /* 圖標與文字之間的間距 */
+  background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M17 8h1a4 4 0 1 1 0 8h-1'/><path d='M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8Z'/><path d='M6 2v6'/></svg>")
+    no-repeat center;
 }
 
 /* 地圖 */
@@ -41,10 +55,11 @@ body {
   display: flex;
   justify-content: center; /* 按鈕居中 */
   gap: 10px;
+  margin-bottom: 5px; /* 減少間距，從 15px 改為 5px */
 }
 
 .nearby-btn {
-  padding: 10px 20px;
+  padding: 10px 20px 10px 40px; /* 為圖標留出空間 */
   border: none;
   border-radius: 5px;
   background-color: #007bff;
@@ -52,10 +67,77 @@ body {
   font-size: 1em;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  position: relative; /* 為圖標定位 */
+}
+
+/* 按鈕左邊放大鏡圖標 */
+.nearby-btn::before {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><path d='m21 21-4.3-4.3'/></svg>")
+    no-repeat center;
 }
 
 .nearby-btn:hover {
   background-color: #0056b3;
+}
+
+/* 為 district-select 添加基礎樣式 */
+.district-select {
+  padding: 8px 30px 8px 40px; /* 為圖標留出空間 */
+  margin-left: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  position: relative; /* 為圖標定位 */
+  background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z'/></svg>")
+    no-repeat 10px center;
+  background-size: 20px 20px;
+}
+
+/* 顯示咖啡清單按鈕 */
+.toggle-btn {
+  padding: 8px 16px 8px 36px; /* 為圖標留出空間 */
+  border: 1px solid #007bff; /* 藍色邊框 */
+  border-radius: 5px;
+  background-color: #f1f8ff; /* 淺藍色背景 */
+  color: #007bff; /* 藍色文字 */
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  position: relative; /* 為圖標定位 */
+  margin: 2px 0; /* 進一步減少間距，從 5px 改為 2px */
+}
+
+.toggle-btn:hover {
+  background-color: #007bff; /* 懸停時背景變藍 */
+  color: white; /* 文字變白 */
+}
+
+/* 為顯示咖啡清單按鈕添加清單圖標 */
+.toggle-btn::before {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23007bff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M8 6h13'/><path d='M8 12h13'/><path d='M8 18h13'/><path d='M3 6h.01'/><path d='M3 12h.01'/><path d='M3 18h.01'/></svg>")
+    no-repeat center;
+}
+
+/* 懸停時圖標顏色與文字同步變白 */
+.toggle-btn:hover::before {
+  background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M8 6h13'/><path d='M8 12h13'/><path d='M8 18h13'/><path d='M3 6h.01'/><path d='M3 12h.01'/><path d='M3 18h.01'/></svg>")
+    no-repeat center;
 }
 
 /* 結果區域 */
@@ -66,6 +148,7 @@ body {
   border-radius: 4px;
   padding: 5px 10px;
   background-color: #fff;
+  margin-top: 0; /* 移除上邊距 */
 }
 
 .results-container h3 {
@@ -137,10 +220,11 @@ body {
   text-decoration: underline;
 }
 
-.district-select {
-  padding: 8px;
-  margin-left: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
+/* 減少 #status 的間距 */
+#status {
+  text-align: center;
+  /*min-height: 1.2em;*/
+  color: #dc3545;
+  font-weight: bold;
+  /*margin-bottom: 2px;*/
 }

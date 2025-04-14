@@ -6,6 +6,7 @@
     <title>附近咖啡店 Finder</title>
     <link rel="stylesheet" href="leaflet/leaflet.css" />
     <link rel="stylesheet" href="App.css" />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <style>
       .map-container {
         height: 500px; /* 固定地圖高度，可調整 */
@@ -52,21 +53,17 @@
           <option value="yuen-long">元朗區</option>
         </select>
       </div>
-      <div
-        id="status"
-        style="
-          text-align: center;
-          min-height: 1.2em;
-          color: #dc3545;
-          font-weight: bold;
-          margin-bottom: 10px;
-        "
-      ></div>
+      <div id="status"></div>
       <button id="toggleResults" class="toggle-btn">顯示咖啡店清單</button>
       <div id="results" class="results-container"></div>
     </div>
     <script src="leaflet/leaflet.js"></script>
     <script src="app.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        lucide.createIcons();
+      });
+    </script>
     <script>
       (function () {
         function c() {

@@ -1,180 +1,230 @@
-.app-container {
-  width: 350px;
-  min-height: 500px;
-  font-family: 'Arial', sans-serif;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+/* 基本重置和容器 */
+body {
+  width: 400px; /* 擴展彈窗寬度 */
+  height: 580px; /* 擴展彈窗高度 */
+  margin: 0;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #333;
+  background-color: #f8f9fa;
 }
 
-.search-container {
-  padding: 20px;
-  background: linear-gradient(135deg, #f5e9d4 0%, #d9c2a7 100%);
-  border-radius: 8px;
-  text-align: center;
+.app-container {
+  padding: 15px;
   height: 100%;
+  box-sizing: border-box; /* 確保 padding 不會增加總寬高 */
   display: flex;
   flex-direction: column;
-  justify-content: center;
 }
 
 .title {
-  font-size: 18px;
-  margin: 0 0 15px;
-  color: #6f4e37;
-  font-weight: 600;
+  text-align: center;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 10px; /* 減少底部間距 */
+  font-size: 1.4em;
+  display: flex; /* 使用 flex 佈局讓圖標與文字自然排列 */
+  align-items: center; /* 垂直居中對齊 */
+  justify-content: center; /* 水平居中 */
 }
 
-.search-input {
+/* 咖啡杯圖標 */
+.title::before {
+  content: "";
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  margin-right: 8px; /* 圖標與文字之間的間距 */
+  background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M17 8h1a4 4 0 1 1 0 8h-1'/><path d='M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8Z'/><path d='M6 2v6'/></svg>")
+    no-repeat center;
+}
+
+/* 地圖 */
+.map-container {
   width: 100%;
-  padding: 10px;
-  font-size: 14px;
-  border: 1px solid #ddd;
+  height: 280px; /* 調整地圖高度 */
+  border: 1px solid #ccc;
   border-radius: 4px;
-  outline: none;
-  margin-bottom: 15px;
-  transition: border-color 0.3s;
+  margin-bottom: 10px;
+  background-color: #e9ecef; /* 地圖加載時的背景色 */
 }
 
-.search-input:focus {
-  border-color: #4285f4;
-}
-
+/* 按鈕 */
 .button-group {
   display: flex;
+  justify-content: center; /* 按鈕居中 */
   gap: 10px;
-  justify-content: center;
+  margin-bottom: 5px; /* 減少間距，從 15px 改為 5px */
 }
 
-.search-btn,
 .nearby-btn {
-  padding: 8px 15px;
-  font-size: 14px;
-  color: white;
+  padding: 10px 20px 10px 40px; /* 為圖標留出空間 */
   border: none;
-  border-radius: 4px;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  font-size: 1em;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: background-color 0.2s ease;
+  position: relative; /* 為圖標定位 */
 }
 
-.search-btn {
-  background: #4285f4;
-}
-
-.search-btn:hover {
-  background: #3267d6;
-}
-
-.nearby-btn {
-  background: #34a853;
+/* 按鈕左邊放大鏡圖標 */
+.nearby-btn::before {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><path d='m21 21-4.3-4.3'/></svg>")
+    no-repeat center;
 }
 
 .nearby-btn:hover {
-  background: #2d9147;
+  background-color: #0056b3;
 }
 
+/* 為 district-select 添加基礎樣式 */
+.district-select {
+  padding: 8px 30px 8px 40px; /* 為圖標留出空間 */
+  margin-left: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  position: relative; /* 為圖標定位 */
+  background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z'/></svg>")
+    no-repeat 10px center;
+  background-size: 20px 20px;
+}
+
+/* 顯示咖啡清單按鈕 */
+.toggle-btn {
+  padding: 8px 16px 8px 36px; /* 為圖標留出空間 */
+  border: 1px solid #007bff; /* 藍色邊框 */
+  border-radius: 5px;
+  background-color: #f1f8ff; /* 淺藍色背景 */
+  color: #007bff; /* 藍色文字 */
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  position: relative; /* 為圖標定位 */
+  margin: 2px 0; /* 進一步減少間距，從 5px 改為 2px */
+}
+
+.toggle-btn:hover {
+  background-color: #007bff; /* 懸停時背景變藍 */
+  color: white; /* 文字變白 */
+}
+
+/* 為顯示咖啡清單按鈕添加清單圖標 */
+.toggle-btn::before {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23007bff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M8 6h13'/><path d='M8 12h13'/><path d='M8 18h13'/><path d='M3 6h.01'/><path d='M3 12h.01'/><path d='M3 18h.01'/></svg>")
+    no-repeat center;
+}
+
+/* 懸停時圖標顏色與文字同步變白 */
+.toggle-btn:hover::before {
+  background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M8 6h13'/><path d='M8 12h13'/><path d='M8 18h13'/><path d='M3 6h.01'/><path d='M3 12h.01'/><path d='M3 18h.01'/></svg>")
+    no-repeat center;
+}
+
+/* 結果區域 */
 .results-container {
+  flex-grow: 1; /* 佔據剩餘空間 */
+  overflow-y: auto; /* 如果內容過多則顯示滾動條 */
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 5px 10px;
+  background-color: #fff;
+  margin-top: 0; /* 移除上邊距 */
+}
+
+.results-container h3 {
+  margin-top: 5px;
+  margin-bottom: 10px;
+  font-size: 1.1em;
+  color: #555;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+
+/* 單個咖啡店項目 */
+.coffee-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
   display: flex;
   flex-direction: column;
-  height: 500px;
-}
-
-.map-container {
-  flex: 1;
-  height: 250px;
-  position: relative;
-}
-
-.back-btn {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  padding: 5px 10px;
-  background: #f1f1f1;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.back-btn:hover {
-  background: #e0e0e0;
-}
-
-.list-section {
-  flex: 1;
-  padding: 10px;
-  overflow: hidden;
-}
-
-.list-title {
-  font-size: 16px;
-  margin: 0 0 10px;
-  color: #333;
-}
-
-.coffee-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  max-height: 100%;
-  overflow-y: auto;
-}
-
-.coffee-item {
-  padding: 10px;
-  border-bottom: 1px solid #eee;
-  font-size: 14px;
+  gap: 8px; /* 標題和按鈕間隔 */
 }
 
 .coffee-item:last-child {
   border-bottom: none;
 }
 
-.shop-info {
-  font-weight: 500;
-  color: #333;
+.coffee-item h4 {
+  margin: 0;
+  font-size: 1.05em;
+  font-weight: bold;
 }
 
-.shop-address {
-  color: #777;
-  font-size: 12px;
-  margin-top: 4px;
-}
-
+/* 查看連結按鈕 */
 .shop-actions {
-  margin-top: 8px;
   display: flex;
+  flex-wrap: wrap; /* 如果按鈕多，允許換行 */
   gap: 8px;
 }
 
-.navigate-btn,
-.favorite-btn {
-  padding: 5px 10px;
-  font-size: 12px;
-  color: white;
-  border: none;
+.external-link-btn {
+  padding: 4px 8px;
+  border: 1px solid #6c757d; /* 灰色邊框 */
+  background-color: white;
+  color: #6c757d; /* 灰色文字 */
+  text-decoration: none;
   border-radius: 4px;
+  font-size: 0.85em;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  white-space: nowrap; /* 防止按鈕文字換行 */
 }
 
-.navigate-btn {
-  background: #4285f4;
+.external-link-btn:hover {
+  background-color: #6c757d; /* 懸停時變深灰色 */
+  color: white;
+  border-color: #5a6268;
 }
 
-.navigate-btn:hover {
-  background: #3267d6;
+/* OSM 署名樣式 */
+.osm-attribution {
+  margin-top: 10px;
+  font-size: 0.8em;
+  color: #666;
+  text-align: center;
+}
+.osm-attribution a {
+  color: #007bff;
+  text-decoration: none;
+}
+.osm-attribution a:hover {
+  text-decoration: underline;
 }
 
-.favorite-btn {
-  background: #ccc;
-}
-
-.favorite-btn.favorited {
-  background: #ea4335;
-}
-
-.favorite-btn:hover {
-  background: #d93025;
+/* 減少 #status 的間距 */
+#status {
+  text-align: center;
+  /*min-height: 1.2em;*/
+  color: #dc3545;
+  font-weight: bold;
+  /*margin-bottom: 2px;*/
 }
